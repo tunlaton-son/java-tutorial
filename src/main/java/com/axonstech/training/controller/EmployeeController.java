@@ -1,5 +1,8 @@
-package com.axonstech.training;
+package com.axonstech.training.controller;
 
+import com.axonstech.training.dto.EmployeeDto;
+import com.axonstech.training.entity.Employee;
+import com.axonstech.training.service.EmployeeService;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,14 +17,14 @@ public class EmployeeController {
     }
 
     @GetMapping
-    public Page<Employee> getAllEmp(@RequestParam(name = "onlyActive", required = false) Boolean onlyActives,
+    public Page<EmployeeDto> getAllEmp(@RequestParam(name = "onlyActive", required = false) Boolean onlyActives,
                                     @RequestParam(required = false, defaultValue = "1") int page,
                                     @RequestParam(required = false, defaultValue = "10") int size) {
         return employeeService.getEmployees(onlyActives, page, size);
     }
 
     @GetMapping("/{id}")
-    public Employee getEmp(Long id){
+    public EmployeeDto getEmp(@PathVariable Long id){
         return employeeService.getEmployee(id);
     }
 
@@ -42,4 +45,8 @@ public class EmployeeController {
         employeeService.delete(id);
     }
 
+    @PostMapping("/{id}/company/{companyCode}")
+    public Employee addToCompany(@PathVariable Long id ,@PathVariable String companyCode) throws Exception {
+        return employeeService.addToCompany(id, companyCode);
+    }
 }
