@@ -1,9 +1,8 @@
-package com.axonstech.training;
+package com.axonstech.training.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.axonstech.training.entity.Company;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
-import lombok.ToString;
 
 @Entity
 @Table(name = "employee")
@@ -34,6 +33,10 @@ public class Employee {
     @Version
     @Column(name = "VERSION", nullable = false)
     private Integer version;
+
+    @ManyToOne
+    @JoinColumn(name = "company_code")
+    private Company company;
 
 
     public Long getId() {
@@ -97,5 +100,14 @@ public class Employee {
 
     public void setVersion(Integer version) {
         this.version = version;
+    }
+
+
+    public Company getCompany() {
+        return company;
+    }
+
+    public void setCompany(Company company) {
+        this.company = company;
     }
 }

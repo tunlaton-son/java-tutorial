@@ -1,5 +1,6 @@
-package com.axonstech.training;
+package com.axonstech.training.repository;
 
+import com.axonstech.training.entity.Employee;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
