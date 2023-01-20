@@ -1,8 +1,10 @@
 package com.axonstech.training.controller;
 
 import com.axonstech.training.dto.EmployeeDto;
+import com.axonstech.training.dto.request.NewEmployeeRequest;
 import com.axonstech.training.entity.Employee;
 import com.axonstech.training.service.EmployeeService;
+import lombok.Data;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,14 +30,15 @@ public class EmployeeController {
         return employeeService.getEmployee(id);
     }
 
+
     @PostMapping
-    public Employee saveEmp(@RequestBody Employee employee) throws Exception {
-        return employeeService.save(employee);
+    public EmployeeDto saveEmp(@RequestBody NewEmployeeRequest employeeDto) throws Exception {
+        return employeeService.save(employeeDto);
     }
 
 
     @PutMapping
-    public Employee updateEmp(@RequestBody Employee employee){
+    public EmployeeDto updateEmp(@RequestBody EmployeeDto employee) throws Exception {
         return employeeService.update(employee);
     }
 

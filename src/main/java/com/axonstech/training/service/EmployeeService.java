@@ -1,7 +1,9 @@
 package com.axonstech.training.service;
 
+import com.axonstech.training.controller.EmployeeController;
 import com.axonstech.training.dto.CompanyDto;
 import com.axonstech.training.dto.EmployeeDto;
+import com.axonstech.training.dto.request.NewEmployeeRequest;
 import com.axonstech.training.entity.Employee;
 import com.axonstech.training.repository.EmployeeRepository;
 import com.axonstech.training.entity.Company;
@@ -12,7 +14,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 public class EmployeeService {
@@ -46,22 +47,40 @@ public class EmployeeService {
         EmployeeDto employeeDto = new EmployeeDto();
         BeanUtils.copyProperties(employee, employeeDto);
         Company company = employee.getCompany();
-        CompanyDto companyDto = new CompanyDto();
-        BeanUtils.copyProperties(company, companyDto);
-        employeeDto.setCompany(companyDto);
+        if(company != null) {
+            CompanyDto companyDto = new CompanyDto();
+            BeanUtils.copyProperties(company, companyDto);
+            employeeDto.setCompany(companyDto);
+        }
         return employeeDto;
     }
 
-    public Employee save(Employee employee) throws Exception {
-        Optional<Employee> oEmployee = employeeRepository.findByUsernameIgnoreCase(employee.getUsername());
+    public EmployeeDto save(NewEmployeeRequest employeeRequest) throws Exception {
+        Optional<Employee> oEmployee = employeeRepository.findByUsernameIgnoreCase(employeeRequest.getUsername());
         if(oEmployee.isPresent()){
             throw new Exception("username is already taken");
         }
-        return employeeRepository.save(employee);
+        Employee employee = oEmployee.orElseGet(Employee::new);
+        BeanUtils.copyProperties(employeeRequest, employee,"password");
+        employeeRequest.setId(employee.getId());
+        employeeRepository.save(employee);
+
+        EmployeeDto dto =  new EmployeeDto();
+        BeanUtils.copyProperties(employee, dto);
+        return dto;
     }
 
-    public Employee update(Employee employee) {
-        return employeeRepository.save(employee);
+    public EmployeeDto update(EmployeeDto employeeDto) throws Exception {
+        Optional<Employee> oEmployee = employeeRepository.findById(employeeDto.getId());
+        if(oEmployee.isEmpty()){
+            throw new Exception("Id not found");
+        }
+        Employee employee = oEmployee.orElseGet(Employee::new);
+        BeanUtils.copyProperties(employeeDto, employee,"password");
+        employeeDto.setId(employee.getId());
+        employeeDto.setVersion(employee.getVersion());
+        employeeRepository.save(employee);
+        return employeeDto;
     }
 
     public void delete(Long id) {
