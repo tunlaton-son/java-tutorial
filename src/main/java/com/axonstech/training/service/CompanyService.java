@@ -69,7 +69,7 @@ public class CompanyService {
 
     public CompanyDto updateComp(CompanyDto companyDto) {
         Company company = new Company();
-        BeanUtils.copyProperties(company, companyDto);
+        BeanUtils.copyProperties(companyDto, company);
 
         company = companyRepository.save(company);
 

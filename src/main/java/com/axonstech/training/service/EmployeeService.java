@@ -83,7 +83,7 @@ public class EmployeeService {
 
     public EmployeeDto updateEmp(EmployeeDto employeeDto) {
         Employee employee = new Employee();
-        BeanUtils.copyProperties(employee, employeeDto);
+        BeanUtils.copyProperties(employeeDto, employee);
 
         employee = employeeRepository.save(employee);
 
