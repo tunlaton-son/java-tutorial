@@ -25,12 +25,34 @@ public class EmployeeService {
     @Autowired
     private CompanyRepository companyRepository;
 
-    public Page<Employee> getEmployees(Boolean onlyActives, int page, int size) {
+    public Page<EmployeeDto> getEmployees(Boolean onlyActives, int page, int size) {
         PageRequest pageable = PageRequest.of(page - 1, size);
         if(onlyActives != null ){
-            return employeeRepository.findByActive(onlyActives.booleanValue(), pageable);
+
+            Page<Employee> pEmployee = employeeRepository.findByActive(onlyActives.booleanValue(), pageable);
+            return pEmployee.map(employee -> {
+                EmployeeDto dto = new EmployeeDto();
+                BeanUtils.copyProperties(employee, dto);
+
+                CompanyDto companyDto = new CompanyDto();
+                BeanUtils.copyProperties(employee.getCompany(), companyDto);
+                dto.setCompanyDto(companyDto);
+                return dto;
+            });
+
         }
-        return employeeRepository.findAll(pageable);
+
+        Page<Employee> pEmployee = employeeRepository.findAll(pageable);
+
+        return pEmployee.map(employee -> {
+            EmployeeDto dto = new EmployeeDto();
+            BeanUtils.copyProperties(employee, dto);
+
+            CompanyDto companyDto = new CompanyDto();
+            BeanUtils.copyProperties(employee.getCompany(), companyDto);
+            dto.setCompanyDto(companyDto);
+            return dto;
+        });
     }
 
     public EmployeeDto getEmployee(Long id) {
