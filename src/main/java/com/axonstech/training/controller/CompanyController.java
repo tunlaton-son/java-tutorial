@@ -1,5 +1,6 @@
 package com.axonstech.training.controller;
 
+import com.axonstech.training.dto.CompanyDto;
 import com.axonstech.training.entity.Company;
 import com.axonstech.training.service.CompanyService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,26 +15,26 @@ public class CompanyController {
     private CompanyService companyService;
 
     @GetMapping
-    public Page<Company> getCompanies(@RequestParam(name = "onlyActive", required = false) Boolean onlyActives,
-                                      @RequestParam(required = false, defaultValue = "1") int page,
-                                      @RequestParam(required = false, defaultValue = "10") int size) {
+    public Page<CompanyDto> getCompanies(@RequestParam(name = "onlyActive", required = false) Boolean onlyActives,
+                                         @RequestParam(required = false, defaultValue = "1") int page,
+                                         @RequestParam(required = false, defaultValue = "10") int size) {
 
         return companyService.getCompanies(onlyActives, page, size);
     }
 
-    @GetMapping("/{id}")
-    public Company getComp(@PathVariable String id){
-        return companyService.getCompany(id);
+    @GetMapping("/{companyCode}")
+    public CompanyDto getComp(@PathVariable String companyCode){
+        return companyService.getCompany(companyCode);
     }
 
     @PostMapping
-    public Company saveComp(@RequestBody Company company) throws Exception {
-        return companyService.saveComp(company);
+    public CompanyDto saveComp(@RequestBody CompanyDto companyDto) throws Exception {
+        return companyService.saveComp(companyDto);
     }
 
     @PutMapping
-    public Company updateComp(@RequestBody Company company){
-        return companyService.updateComp(company);
+    public CompanyDto updateComp(@RequestBody CompanyDto companyDto){
+        return companyService.updateComp(companyDto);
     }
 
     @DeleteMapping("/{id}")

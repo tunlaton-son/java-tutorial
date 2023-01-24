@@ -2,6 +2,7 @@ package com.axonstech.training.service;
 
 import com.axonstech.training.dto.CompanyDto;
 import com.axonstech.training.dto.EmployeeDto;
+import com.axonstech.training.dto.request.SaveEmployeeRequest;
 import com.axonstech.training.entity.Company;
 import com.axonstech.training.entity.Employee;
 import com.axonstech.training.repository.CompanyRepository;
@@ -32,12 +33,8 @@ public class EmployeeService {
             Page<Employee> pEmployee = employeeRepository.findByActive(onlyActives.booleanValue(), pageable);
             return pEmployee.map(employee -> {
                 EmployeeDto dto = new EmployeeDto();
-                BeanUtils.copyProperties(employee, dto);
 
-                CompanyDto companyDto = new CompanyDto();
-                BeanUtils.copyProperties(employee.getCompany(), companyDto);
-                dto.setCompanyDto(companyDto);
-                return dto;
+                return dto.form(employee);
             });
 
         }
@@ -46,38 +43,52 @@ public class EmployeeService {
 
         return pEmployee.map(employee -> {
             EmployeeDto dto = new EmployeeDto();
-            BeanUtils.copyProperties(employee, dto);
 
-            CompanyDto companyDto = new CompanyDto();
-            BeanUtils.copyProperties(employee.getCompany(), companyDto);
-            dto.setCompanyDto(companyDto);
-            return dto;
+            return dto.form(employee);
         });
     }
 
     public EmployeeDto getEmployee(Long id) {
-        Employee employee = employeeRepository.findById(id).get();
+        Employee employee = employeeRepository.findById(id).orElse(null);
+
         EmployeeDto employeeDto = new EmployeeDto();
-        BeanUtils.copyProperties(employee , employeeDto);
+        if(employee != null){
 
-        CompanyDto companyDto = new CompanyDto();
-        BeanUtils.copyProperties(employee.getCompany(), companyDto);
+            BeanUtils.copyProperties(employee , employeeDto);
 
-        employeeDto.setCompanyDto(companyDto);
+            if(employee.getCompany() != null){
+                CompanyDto companyDto = new CompanyDto();
+                BeanUtils.copyProperties(employee.getCompany(), companyDto);
+                employeeDto.setCompanyDto(companyDto);
+            }
+
+        }
 
         return employeeDto;
     }
 
-    public Employee saveEmp(Employee employee) throws Exception {
-        Optional<Employee> oEmployee = employeeRepository.findByUsernameIgnoreCase(employee.getUsername());
+    public SaveEmployeeRequest saveEmp(SaveEmployeeRequest employeeDto) throws Exception {
+        Optional<Employee> oEmployee = employeeRepository.findByUsernameIgnoreCase(employeeDto.getUsername());
         if(oEmployee.isPresent()){
             throw new Exception("username is already taken");
         }
-        return employeeRepository.save(employee);
+
+        Employee employee = new Employee();
+
+        BeanUtils.copyProperties(employeeDto, employee);
+
+        employee = employeeRepository.save(employee);
+        return employeeDto.form(employee);
     }
 
-    public Employee updateEmp(Employee employee) {
-        return employeeRepository.save(employee);
+    public EmployeeDto updateEmp(EmployeeDto employeeDto) {
+        Employee employee = new Employee();
+        BeanUtils.copyProperties(employee, employeeDto);
+
+        employee = employeeRepository.save(employee);
+
+
+        return employeeDto.form(employee);
     }
 
     public void deleteEmp(Long id) {

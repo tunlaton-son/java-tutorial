@@ -1,6 +1,7 @@
 package com.axonstech.training.controller;
 
 import com.axonstech.training.dto.EmployeeDto;
+import com.axonstech.training.dto.request.SaveEmployeeRequest;
 import com.axonstech.training.entity.Employee;
 import com.axonstech.training.service.EmployeeService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,13 +29,13 @@ public class EmployeeController {
     }
 
     @PostMapping
-    public Employee saveEmp(@RequestBody Employee employee) throws Exception {
-        return employeeService.saveEmp(employee);
+    public SaveEmployeeRequest saveEmp(@RequestBody SaveEmployeeRequest employeeDto) throws Exception {
+        return employeeService.saveEmp(employeeDto);
     }
 
     @PutMapping
-    public Employee updateEmp(@RequestBody Employee employee){
-        return employeeService.updateEmp(employee);
+    public EmployeeDto updateEmp(@RequestBody EmployeeDto employeeDto){
+        return employeeService.updateEmp(employeeDto);
     }
 
     @DeleteMapping("/{id}")
